@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111722">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="UPDAY">
+<link rel="manifest" href="manifest.webmanifest">
+<title>UPDAY — мой день</title>
+<style>
+:root{color-scheme:dark;--bg:#10151f;--panel:#192231;--panel2:#202c3d;--line:#2b394d;--muted:#9ba9bc;--text:#f3f6fb;--blue:#3987ff;--cyan:#36d5df;--green:#46d6a0}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1a2940 0,#10151f 52%);color:var(--text);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 16px calc(88px + env(safe-area-inset-bottom));max-width:760px;margin:auto}
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 2px 20px}.brand{display:flex;align-items:center;gap:11px}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#263957,#111827);display:grid;place-items:center;border:1px solid #344b6e}.logo svg{width:28px}.eyebrow{font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}.brand h1{font-size:22px;margin:2px 0 0;letter-spacing:.04em}.date{color:var(--muted);font-size:12px;text-align:right}
+h2{font-size:18px;margin:0 0 13px}.sub{color:var(--muted);font-size:13px}.card{background:linear-gradient(145deg,rgba(32,44,61,.96),rgba(23,32,46,.96));border:1px solid var(--line);border-radius:20px;padding:17px;margin:0 0 14px;box-shadow:0 10px 30px #0002}.hero{display:grid;grid-template-columns:1fr 112px;gap:10px;align-items:center}.big{font-size:35px;font-weight:750;letter-spacing:-.04em}.progress{height:8px;border-radius:9px;background:#344256;overflow:hidden;margin-top:12px}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:9px}.ring{width:104px;height:104px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--blue) var(--p,0%),#344256 0);position:relative}.ring:before{content:"";position:absolute;inset:8px;border-radius:50%;background:#1b2636}.ring strong{position:relative;font-size:23px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.metric{display:flex;gap:12px;align-items:center}.ico{width:40px;height:40px;border-radius:13px;background:#263b58;color:#80b6ff;display:grid;place-items:center;flex:none}.ico svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.metric b{font-size:19px;display:block}.metric small{color:var(--muted)}
+.row{display:flex;align-items:center;gap:9px}.row.between{justify-content:space-between}.task{padding:10px 0;border-bottom:1px solid #2b394d;display:flex;gap:10px;align-items:center}.task:last-child{border:0}.task input[type=checkbox]{accent-color:var(--blue);width:19px;height:19px}.task.done span{text-decoration:line-through;color:#8492a5}.task span{flex:1}.pill{font-size:11px;color:#a9caff;background:#243a58;padding:5px 8px;border-radius:20px}
+input,button{font:inherit}input[type=text],input[type=number]{width:100%;background:#101925;border:1px solid #34445a;color:var(--text);border-radius:12px;padding:11px;min-width:0}button{border:0;border-radius:12px;background:linear-gradient(100deg,var(--blue),#2870e5);color:white;padding:11px 14px;font-weight:650;cursor:pointer}button.secondary{background:#2a394d;color:#dce8f8}button.iconbtn{padding:8px 11px}.add{display:flex;gap:8px;margin-top:12px}.add input{flex:1}
+.tabs{position:fixed;bottom:0;left:0;right:0;background:#111a27ed;backdrop-filter:blur(18px);border-top:1px solid var(--line);display:flex;justify-content:center;gap:clamp(8px,5vw,34px);padding:10px 10px calc(10px + env(safe-area-inset-bottom));z-index:5}.tabs button{background:none;color:var(--muted);padding:7px 10px;font-size:11px;display:grid;justify-items:center;gap:3px}.tabs svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8}.tabs button.active{color:#8dbaff}
+.section{display:none}.section.active{display:block}.macro{margin:12px 0}.macrohead{display:flex;justify-content:space-between;font-size:13px}.note{font-size:12px;color:var(--muted);line-height:1.5}.toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#263a55;padding:10px 14px;border-radius:12px;display:none;z-index:10}
+@media(min-width:600px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<header>
+ <div class="brand"><div class="logo"><svg viewBox="0 0 32 32" fill="none"><path d="M5 17a11 11 0 1 1 21 4" stroke="#39d3df" stroke-width="3.5" stroke-linecap="round"/><path d="m10 15 5 5 9-10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 25h3m-9 0h3" stroke="#3987ff" stroke-width="3" stroke-linecap="round"/></svg></div><div><div class="eyebrow">личный трекер</div><h1>UPDAY</h1></div></div>
+ <div class="date" id="today"></div>
+</header>
+<main>
+<section class="section active" id="home">
+ <div class="card hero"><div><div class="eyebrow">Прогресс дня</div><div class="big" id="percent">0%</div><div class="sub" id="progressText">Начни с одной задачи</div><div class="progress"><span id="progressBar" style="width:0%"></span></div></div><div class="ring" id="ring"><strong id="ringText">0%</strong></div></div>
+ <div class="grid">
+  <div class="card metric"><div class="ico"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/><path d="m7 7 10 10"/></svg></div><div><b id="steps">0</b><small>из 10 000 шагов</small></div></div>
+  <div class="card metric"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3s6 7 6 12a6 6 0 0 1-12 0c0-5 6-12 6-12Z"/></svg></div><div><b id="water">0 мл</b><small>вода за день</small></div></div>
+  <div class="card metric"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 7h16l-1 13H5L4 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></div><div><b id="kcal">0</b><small>из 2 100–2 200 ккал</small></div></div>
+  <div class="card metric"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 21s-8-4.5-8-11a4.5 4.5 0 0 1 8-2 4.5 4.5 0 0 1 8 2c0 6.5-8 11-8 11Z"/></svg></div><div><b id="habitsDone">0</b><small>привычек выполнено</small></div></div>
+ </div>
+ <div class="card"><div class="row between"><h2>Задачи на сегодня</h2><span class="pill" id="taskCount">0 / 0</span></div><div id="taskList"></div><div class="add"><input id="taskInput" type="text" placeholder="Добавить задачу…"><button id="addTask">+</button></div></div>
+ <div class="card"><div class="row between"><h2>Быстрые действия</h2><span class="sub">одним касанием</span></div><div class="grid"><button class="secondary" id="addWater">+ 250 мл воды</button><button class="secondary" id="addSteps">+ 500 шагов</button></div></div>
+</section>
+<section class="section" id="food">
+ <div class="card"><h2>Питание сегодня</h2><div class="big"><span id="foodKcal">0</span> <span style="font-size:15px;color:var(--muted)">ккал</span></div><div class="sub">Ориентир: 2 100–2 200 ккал · Б 130 г · У 230 г · Ж 40–50 г</div>
+ <div class="macro"><div class="macrohead"><span>Белки</span><b id="pVal">0 / 130 г</b></div><div class="progress"><span id="pBar"></span></div></div>
+ <div class="macro"><div class="macrohead"><span>Углеводы</span><b id="cVal">0 / 230 г</b></div><div class="progress"><span id="cBar"></span></div></div>
+ <div class="macro"><div class="macrohead"><span>Жиры</span><b id="fVal">0 / 50 г</b></div><div class="progress"><span id="fBar"></span></div></div></div>
+ <div class="card"><h2>Добавить приём пищи</h2><div class="sub">Можно внести продукт вручную; автоматический каталог подключим отдельно.</div><div class="add"><input id="mealName" placeholder="Продукт или блюдо"></div><div class="grid" style="margin-top:9px"><input id="mealK" type="number" placeholder="Ккал"><input id="mealP" type="number" placeholder="Белки, г"><input id="mealC" type="number" placeholder="Углеводы, г"><input id="mealF" type="number" placeholder="Жиры, г"></div><button style="width:100%;margin-top:10px" id="addMeal">Добавить в дневник</button><div id="mealList" class="note" style="margin-top:12px"></div></div>
+</section>
+<section class="section" id="habits">
+ <div class="card"><h2>Привычки</h2><div class="sub">Отмечай выполненное — прогресс сохранится на этом устройстве.</div><div id="habitList"></div><div class="add"><input id="habitInput" placeholder="Новая привычка…"><button id="addHabit">+</button></div></div>
+ <div class="card"><h2>Шаги</h2><div class="sub">Пока ввод вручную. Прямого доступа сайта к Apple Health нет.</div><div class="add"><input id="stepsInput" type="number" min="0" placeholder="Шагов сегодня"><button id="saveSteps">Сохранить</button></div></div>
+</section>
+<section class="section" id="settings">
+ <div class="card"><h2>Аккаунт и синхронизация</h2><p class="note" id="authStatus">Не выполнен вход. Данные сохраняются на этом устройстве.</p><button id="authButton" style="width:100%">Войти через Google</button></div><div class="card"><h2>Настройки UPDAY</h2><p class="note">Данные сохраняются локально и после входа через Google синхронизируются с Firebase.</p><div class="row between"><span>Активное время</span><b>08:00–23:30</b></div><div class="row between" style="margin-top:12px"><span>Цель шагов</span><b>10 000</b></div><div class="row between" style="margin-top:12px"><span>Язык</span><b>Русский</b></div><p class="note" style="margin-top:16px">Уведомления в этой сборке пока не активированы. Их добавим после настройки разрешений и способа доставки.</p><button class="secondary" id="export">Экспортировать мои данные</button></div>
+</section>
+</main>
+<nav class="tabs">
+<button class="active" data-tab="home"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10H3Z"/><path d="M9 20v-7h6v7"/></svg>Главная</button>
+<button data-tab="food"><svg viewBox="0 0 24 24"><path d="M4 3v8m4-8v8M6 3v18M16 3v18m0-18c4 3 4 8 0 10"/></svg>Питание</button>
+<button data-tab="habits"><svg viewBox="0 0 24 24"><path d="m4 12 5 5L20 6"/><path d="M20 12v8H4V4h11"/></svg>Привычки</button>
+<button data-tab="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 13.5a7 7 0 0 0 0-3l2-1.5-2-3.5-2.4 1a8 8 0 0 0-2.6-1.5L13.5 2h-4L9 5a8 8 0 0 0-2.6 1.5L4 5.5 2 9l2 1.5a7 7 0 0 0 0 3L2 15l2 3.5 2.4-1A8 8 0 0 0 9 19l.5 3h4l.5-3a8 8 0 0 0 2.6-1.5l2.4 1 2-3.5Z"/></svg>Ещё</button>
+</nav>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+// Вставь значения из Firebase Console → Project settings → Your apps → Config
+const firebaseConfig = {
+  apiKey: "PASTE_API_KEY",
+  authDomain: "PASTE_AUTH_DOMAIN",
+  projectId: "PASTE_PROJECT_ID",
+  storageBucket: "PASTE_STORAGE_BUCKET",
+  messagingSenderId: "PASTE_MESSAGING_SENDER_ID",
+  appId: "PASTE_APP_ID"
+};
+const firebaseReady = Object.values(firebaseConfig).every(v => v && !String(v).startsWith("PASTE_"));
+let auth=null, db=null, currentUser=null, cloudReady=false;
+if(firebaseReady){ const app=initializeApp(firebaseConfig); auth=getAuth(app); db=getFirestore(app); }
+const $=id=>document.getElementById(id), todayKey=new Date().toLocaleDateString('sv-SE');
+const defaults={date:todayKey,tasks:[],habits:['Прогулка','Зарядка','Чтение'],meals:[],steps:0,water:0};
+let data;try{data=JSON.parse(localStorage.getItem('upday-v1'))||defaults}catch{data=defaults}
+if(data.date!==todayKey)data={...defaults,date:todayKey,habits:data.habits||defaults.habits};
+let cloudSaveTimer;
+function save(){
+ localStorage.setItem('upday-v1',JSON.stringify(data));render();
+ if(currentUser && cloudReady){
+  clearTimeout(cloudSaveTimer);
+  cloudSaveTimer=setTimeout(async()=>{
+   try{await setDoc(doc(db,'users',currentUser.uid,'app','state'),data);toast('Сохранено в облаке')}
+   catch(e){console.error(e);toast('Не удалось сохранить в облаке')}
+  },350);
+ }
+}
+function toast(s){$('toast').textContent=s;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',1800)}
+$('today').textContent=new Date().toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.section').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab))});
+function render(){
+ const done=data.tasks.filter(x=>x.done).length,total=data.tasks.length,hd=data.habits.filter(x=>x.done).length,percent=total?Math.round(done/total*100):0;
+ $('percent').textContent=percent+'%';$('ringText').textContent=percent+'%';$('ring').style.setProperty('--p',percent+'%');$('progressBar').style.width=percent+'%';$('progressText').textContent=total?`${done} из ${total} задач выполнено`:'Добавь первую задачу';
+ $('taskCount').textContent=`${done} / ${total}`;$('steps').textContent=data.steps.toLocaleString('ru-RU');$('water').textContent=data.water.toLocaleString('ru-RU')+' мл';$('habitsDone').textContent=hd+'/'+data.habits.length;
+ const kcal=data.meals.reduce((s,m)=>s+m.k,0),p=data.meals.reduce((s,m)=>s+m.p,0),c=data.meals.reduce((s,m)=>s+m.c,0),f=data.meals.reduce((s,m)=>s+m.f,0);
+ $('kcal').textContent=kcal;$('foodKcal').textContent=kcal;
+ [['p',p,130],['c',c,230],['f',f,50]].forEach(([id,v,max])=>{$(id+'Val').textContent=`${v} / ${max} г` ;$(id+'Bar').style.width=Math.min(100,v/max*100)+'%'});
+ $('taskList').innerHTML=data.tasks.map((t,i)=>`<label class="task ${t.done?'done':''}"><input type="checkbox" data-task="${i}" ${t.done?'checked':''}><span>${esc(t.name)}</span><button class="secondary iconbtn" data-del="${i}" aria-label="Удалить">×</button></label>`).join('')||'<p class="note">Пока задач нет. Добавь первую ниже.</p>';
+ $('habitList').innerHTML=data.habits.map((h,i)=>`<label class="task ${h.done?'done':''}"><input type="checkbox" data-habit="${i}" ${h.done?'checked':''}><span>${esc(h.name||h)}</span></label>`).join('');
+ $('mealList').innerHTML=data.meals.map(m=>`<div>${esc(m.name)} — ${m.k} ккал · Б ${m.p} · У ${m.c} · Ж ${m.f}</div>`).join('')||'Пока записей нет.';
+ document.querySelectorAll('[data-task]').forEach(x=>x.onchange=()=>{data.tasks[+x.dataset.task].done=x.checked;save()});
+ document.querySelectorAll('[data-habit]').forEach(x=>x.onchange=()=>{data.habits[+x.dataset.habit].done=x.checked;save()});
+ document.querySelectorAll('[data-del]').forEach(x=>x.onclick=()=>{data.tasks.splice(+x.dataset.del,1);save()});
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+$('addTask').onclick=()=>{let v=$('taskInput').value.trim();if(v){data.tasks.push({name:v,done:false});$('taskInput').value='';save()}};
+$('taskInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('addTask').click()});
+$('addHabit').onclick=()=>{let v=$('habitInput').value.trim();if(v){data.habits.push({name:v,done:false});$('habitInput').value='';save()}};
+$('addMeal').onclick=()=>{let name=$('mealName').value.trim();if(!name){toast('Укажи название продукта');return}data.meals.push({name,k:+$('mealK').value||0,p:+$('mealP').value||0,c:+$('mealC').value||0,f:+$('mealF').value||0});['mealName','mealK','mealP','mealC','mealF'].forEach(id=>$(id).value='');save();toast('Добавлено в дневник')};
+$('addWater').onclick=()=>{data.water+=250;save();toast('+250 мл воды')};
+$('addSteps').onclick=()=>{data.steps+=500;save();toast('+500 шагов')};
+$('saveSteps').onclick=()=>{data.steps=Math.max(0,+$('stepsInput').value||0);save();toast('Шаги сохранены')};
+$('export').onclick=()=>{let a=document.createElement('a'),blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});a.href=URL.createObjectURL(blob);a.download='upday-data.json';a.click();URL.revokeObjectURL(a.href)};
+const authButton=$('authButton'), authStatus=$('authStatus');
+if(!firebaseReady){
+ authButton.disabled=true;authButton.textContent='Сначала добавь конфигурацию Firebase';
+ authStatus.textContent='Firebase ещё не подключён: добавь параметры firebaseConfig в index.html.';
+}else{
+ authButton.onclick=async()=>{
+  try{ if(currentUser){await signOut(auth);return} await signInWithPopup(auth,new GoogleAuthProvider()); }
+  catch(e){console.error(e);toast('Ошибка входа: '+(e.code||e.message))}
+ };
+ onAuthStateChanged(auth,async user=>{
+  currentUser=user;cloudReady=false;
+  if(user){
+   authStatus.textContent='Выполнен вход: '+(user.email||'Google аккаунт')+'. Загружаем данные…';
+   authButton.textContent='Выйти из аккаунта';
+   try{
+    const ref=doc(db,'users',user.uid,'app','state'), snap=await getDoc(ref);
+    if(snap.exists()){
+     const remote=snap.data();
+     data=remote.date===todayKey?{...defaults,...remote}:{...defaults,date:todayKey,habits:(remote.habits||defaults.habits).map(h=>typeof h==='string'?{name:h,done:false}:{...h,done:false})};
+    }else{await setDoc(ref,data);}
+    localStorage.setItem('upday-v1',JSON.stringify(data));cloudReady=true;render();
+    authStatus.textContent='Google подключён. Данные синхронизируются с облаком.';toast('Синхронизация включена');
+   }catch(e){console.error(e);authStatus.textContent='Вход выполнен, но не удалось загрузить данные. Проверь правила Firestore.'}
+  }else{authStatus.textContent='Не выполнен вход. Данные сохраняются на этом устройстве.';authButton.textContent='Войти через Google';}
+ });
+}
+render();
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body></html>

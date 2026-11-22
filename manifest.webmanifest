@@ -1,0 +1,17 @@
+{
+  "name": "UPDAY — мой день",
+  "short_name": "UPDAY",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#10151f",
+  "theme_color": "#111722",
+  "lang": "ru",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
